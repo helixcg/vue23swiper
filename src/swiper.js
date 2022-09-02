@@ -58,8 +58,13 @@ export default {
                     img.onload = async function () {
                         if (img.complete) {
                             const data = img.width / img.height
-                            _this.$refs[`swiperImg${index}`].style.height = `${100 / data}vw`
-                            _this.$refs[`swiperImg${index}`].style.backgroundImage = `url(${e.url})`
+
+                            const dataW = window.innerWidth / window.innerHeight
+
+
+                            console.log(data, dataW);
+                            // _this.$refs[`swiperImg${index}`].style.height = `${100 / data}vw`
+                            // _this.$refs[`swiperImg${index}`].style.backgroundImage = `url(${e.url})`
                             _this.$refs[`swiperDiv${index}`].style.transform = `translate(
                               ${e.position.split(',')[0] * 100}vw,
                               ${e.position.split(',')[1] * (100 / data)}vw
@@ -78,11 +83,12 @@ export default {
         return (
             <div class="home">
                 <div ref="swiper" class="swiper-container swiper-container-me">
-                    <div class="swiper-wrapper" style={{ width: '657px' }}>
+                    <div class="swiper-wrapper" style={{ width: '100vw', height: '100vh' }}>
                         {images.map((e, index) =>
                             <div class="swiper-slide" >
                                 <div class="swiper-zoom-container">
-                                    <div ref={`swiperImg${index}`}
+                                    <img src={e.url} style={{ maxWidth: '100%', maxHeight: '100%' }} />
+                                    <div
                                         class="swiper-zoom-target swiper-zoom-target-me">
                                         <div
                                             ref={`swiperDiv${index}`}
