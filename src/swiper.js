@@ -49,7 +49,6 @@ export default {
             this.$data._flag.observer.observe(+scale)
         },
         imgrnder(e, index) {
-            console.log(e);
             const _this = this
             const doDraw = async () => {
                 return new Promise(async resolve => {
@@ -58,17 +57,27 @@ export default {
                     img.onload = async function () {
                         if (img.complete) {
                             const data = img.width / img.height
-
                             const dataW = window.innerWidth / window.innerHeight
 
-
-                            console.log(data, dataW);
-                            // _this.$refs[`swiperImg${index}`].style.height = `${100 / data}vw`
-                            // _this.$refs[`swiperImg${index}`].style.backgroundImage = `url(${e.url})`
-                            _this.$refs[`swiperDiv${index}`].style.transform = `translate(
-                              ${e.position.split(',')[0] * 100}vw,
-                              ${e.position.split(',')[1] * (100 / data)}vw
-                              )`
+                            if (dataW <= data) {
+                                _this.$refs[`swiperImg${index}`].style.height = `${100 / data}vw`
+                                e.sign && e.sign.map((el, indexs) => {
+                                    _this.$refs[`swiperDiv${index}${indexs}`].style.transform = `translate(
+                                        ${el.position.split(',')[0] * 100}vw,
+                                        ${el.position.split(',')[1] * (100 / data)}vw
+                                        )`
+                                })
+                            } else {
+                                _this.$refs[`swiperImg${index}`].style.width = `${data * 100}vh`
+                                _this.$refs[`swiperImg${index}`].style.height = `${100}vh`
+                                e.sign && e.sign.map((el, indexs) => {
+                                    _this.$refs[`swiperDiv${index}${indexs}`].style.transform = `translate(
+                                        ${el.position.split(',')[0] * 100 * data}vh,
+                                        ${el.position.split(',')[1] * 100}vh
+                                        )`
+                                })
+                            }
+                            _this.$refs[`swiperImg${index}`].style.backgroundImage = `url(${e.url})`
                             resolve()
                         }
                     }
@@ -80,6 +89,13 @@ export default {
 
     render() {
         const { images } = this.$props
+        // {
+        //     url: "https://t7.baidu.com/it/u=2306798132,2940525420&fm=193&f=GIF",
+        //     sign: [
+        //       { defectName: "测试33", direction: "R", position: "0.7,0.5" },
+        //       { defectName: "测试44", direction: "L", position: "0.5,0.8" },
+        //     ],
+        //   }
         return (
             <div class="home">
                 <div ref="swiper" class="swiper-container swiper-container-me">
@@ -87,20 +103,22 @@ export default {
                         {images.map((e, index) =>
                             <div class="swiper-slide" >
                                 <div class="swiper-zoom-container">
-                                    <img src={e.url} style={{ maxWidth: '100%', maxHeight: '100%' }} />
-                                    <div
+                                    <div ref={`swiperImg${index}`}
                                         class="swiper-zoom-target swiper-zoom-target-me">
-                                        <div
-                                            ref={`swiperDiv${index}`}
-                                            style={{ position: 'absolute', top: '0px', left: 0 }}>
-                                            <span class="spanOut" >
-                                                <span
-                                                    class={e.direction === 'L' ? 'spanIn' : 'spanIns'}
-                                                >
-                                                    {e.defectName}
-                                                </span>
-                                            </span>
-                                        </div>
+                                        {
+                                            e.sign && e.sign.map((el, indexs) =>
+                                                <div
+                                                    ref={`swiperDiv${index}${indexs}`}
+                                                    style={{ position: 'absolute', top: '0px', left: 0 }}>
+                                                    <span class="spanOut" >
+                                                        <span
+                                                            class={el.direction === 'L' ? 'spanIn' : 'spanIns'}
+                                                        >
+                                                            {el.defectName}
+                                                        </span>
+                                                    </span>
+                                                </div>)
+                                        }
                                     </div>
                                 </div>
                             </div>)}
